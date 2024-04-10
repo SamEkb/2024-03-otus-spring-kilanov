@@ -17,10 +17,12 @@ public class TestServiceImpl implements TestService {
         ioService.printLine("");
         ioService.printFormattedLine("Please answer the questions below%n");
         for (Question question : questionDao.findAll()) {
+            var answerCounter = 0;
             ioService.printFormattedLine(question.text());
 
             for (Answer answer : question.answers()) {
-                ioService.printLine(answer.text());
+                answerCounter++;
+                ioService.printLine(answerCounter + "." + " " + answer.text());
             }
 
             ioService.printLine("");

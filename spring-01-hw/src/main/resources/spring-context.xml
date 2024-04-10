@@ -8,7 +8,7 @@
         <constructor-arg name="testFileName" value="questions.csv"/>
     </bean>
 
-    <bean id="questionDao" class="ru.skilanov.spring.dao.QuestionDaoImpl">
+    <bean id="questionDao" class="ru.skilanov.spring.dao.CsvQuestionDao">
         <constructor-arg name="fileNameProvider" ref="testFileNameProvider"/>
     </bean>
 

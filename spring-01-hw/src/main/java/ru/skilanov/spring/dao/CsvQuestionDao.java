@@ -14,15 +14,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class QuestionDaoImpl implements QuestionDao {
+public class CsvQuestionDao implements QuestionDao {
     private final TestFileNameProvider fileNameProvider;
 
     @Override
     public List<Question> findAll() {
-        try (InputStream file = readFile()) {
+        try (InputStream file = getInputStream()) {
             return readQuestionsFromCsv(file);
         } catch (IOException e) {
             throw new QuestionReadException("Error reading question file", e);
@@ -53,7 +54,7 @@ public class QuestionDaoImpl implements QuestionDao {
         return questions;
     }
 
-    private CsvToBean<QuestionDto> buildCsvToBean(BufferedReader reader) { // Helper method
+    private CsvToBean<QuestionDto> buildCsvToBean(BufferedReader reader) {
         return new CsvToBeanBuilder<QuestionDto>(reader)
                 .withSkipLines(1)
                 .withSeparator(';')
@@ -61,8 +62,9 @@ public class QuestionDaoImpl implements QuestionDao {
                 .build();
     }
 
-    private InputStream readFile() {
+    private InputStream getInputStream() {
         ClassLoader classLoader = getClass().getClassLoader();
-        return classLoader.getResourceAsStream(fileNameProvider.getTestFileName());
+        InputStream inputStream = classLoader.getResourceAsStream(fileNameProvider.getTestFileName());
+        return Objects.requireNonNull(inputStream);
     }
 }

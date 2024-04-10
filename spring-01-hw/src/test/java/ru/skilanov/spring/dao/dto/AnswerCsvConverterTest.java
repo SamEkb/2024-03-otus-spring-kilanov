@@ -19,7 +19,7 @@ public class AnswerCsvConverterTest {
     @Test
     public void whenConvertAnswerThenItConverted() {
         Answer answer = (Answer) answerCsvConverter.convertToRead("It is right answer!%true");
-        assertEquals("It is right answer", answer.text());
+        assertEquals("It is right answer!", answer.text());
         assertTrue(answer.isCorrect());
     }
 }
