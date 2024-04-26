@@ -31,7 +31,8 @@ public class TestServiceImpl implements TestService {
             localizedIOService.printFormattedLine(question.text());
             printAnswers(question, answerCounter);
 
-            var studentAnswer = localizedIOService.readIntForRangeLocalized(1,3,"TestService.choose.answer");
+            var studentAnswer = localizedIOService
+                    .readIntForRangeLocalized(1, questions.size(), "TestService.choose.answer");
 
             isAnswerValid = checkAnswer(question, studentAnswer);
 
@@ -41,13 +42,8 @@ public class TestServiceImpl implements TestService {
     }
 
     private static Boolean checkAnswer(Question question, int studentAnswer) {
-        try {
-            int answerIndex = studentAnswer - 1;
-            return question.answers().get(answerIndex).isCorrect();
-
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        int answerIndex = studentAnswer - 1;
+        return question.answers().get(answerIndex).isCorrect();
     }
 
     private void printAnswers(Question question, int answerCounter) {

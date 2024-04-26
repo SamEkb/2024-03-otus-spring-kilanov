@@ -25,8 +25,8 @@ public class CsvQuestionDao implements QuestionDao {
 
     @Override
     public List<Question> findAll() {
-        InputStream file = getInputStream();
-        return readQuestionsFromCsv(file);
+        InputStream inputStream = getInputStream();
+        return readQuestionsFromCsv(inputStream);
     }
 
     private List<Question> readQuestionsFromCsv(InputStream inputStream) throws QuestionReadException {
