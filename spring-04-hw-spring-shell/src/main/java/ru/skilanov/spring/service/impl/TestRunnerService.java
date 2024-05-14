@@ -5,6 +5,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.stereotype.Component;
 import ru.skilanov.spring.domain.Student;
+import ru.skilanov.spring.service.api.IOService;
 import ru.skilanov.spring.service.api.ResultService;
 import ru.skilanov.spring.service.api.StudentService;
 import ru.skilanov.spring.service.api.TestService;
@@ -20,6 +21,8 @@ public class TestRunnerService {
 
     private final ResultService resultService;
 
+    private final IOService ioService;
+
     private Student student;
 
 
@@ -34,7 +37,7 @@ public class TestRunnerService {
             var testResult = testService.executeTestFor(student);
             resultService.showResult(testResult);
         } else {
-            System.out.println("Student is not registered. Please register before taking the test.");
+            ioService.printLine("Student is not registered. Please register before taking the test.");
         }
     }
 }
