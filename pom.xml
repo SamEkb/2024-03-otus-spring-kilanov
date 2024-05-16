@@ -14,6 +14,7 @@
         <module>spring-01-hw</module>
         <module>spring-02-hw</module>
         <module>spring-03-hw-spring-boot</module>
+        <module>spring-04-hw-spring-shell</module>
     </modules>
 
 </project>
