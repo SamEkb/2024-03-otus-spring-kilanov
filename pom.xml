@@ -15,6 +15,7 @@
         <module>spring-02-hw</module>
         <module>spring-03-hw-spring-boot</module>
         <module>spring-04-hw-spring-shell</module>
+        <module>spring-05-hw-spring-jdbc</module>
     </modules>
 
 </project>
