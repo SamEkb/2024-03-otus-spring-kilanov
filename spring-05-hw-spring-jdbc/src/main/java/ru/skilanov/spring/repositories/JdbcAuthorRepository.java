@@ -1,6 +1,5 @@
 package ru.skilanov.spring.repositories;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -37,15 +36,12 @@ public class JdbcAuthorRepository implements AuthorRepository {
     @Override
     public Optional<Author> findById(long id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
-        try {
-            return Optional.ofNullable(namedParameterJdbcOperations.queryForObject(
-                    "SELECT id, full_name FROM authors WHERE id = :id",
-                    params,
-                    new AuthorRowMapper()
-            ));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+
+        return namedParameterJdbcOperations.query(
+                "SELECT id, full_name FROM authors WHERE id = :id",
+                params,
+                new AuthorRowMapper()
+        ).stream().findFirst();
     }
 
     @Override

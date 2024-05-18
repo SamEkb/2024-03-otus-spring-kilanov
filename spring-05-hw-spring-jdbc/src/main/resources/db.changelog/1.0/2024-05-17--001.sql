@@ -1,0 +1,24 @@
+-- ChangeSet 2024-05-17--001--authors
+CREATE TABLE authors (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+full_name VARCHAR(50) NOT NULL,
+CONSTRAINT pk_authors PRIMARY KEY (id)
+);
+
+-- ChangeSet 2024-05-17--0001--genres
+CREATE TABLE genres (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(50) NOT NULL,
+CONSTRAINT pk_genres PRIMARY KEY (id)
+);
+
+-- ChangeSet 2024-05-17--0001--books
+CREATE TABLE books (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(50) NOT NULL,
+author_id BIGINT NOT NULL,
+genre_id BIGINT NOT NULL,
+CONSTRAINT pk_book PRIMARY KEY (id),
+CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES authors(id),
+CONSTRAINT fk_genre FOREIGN KEY (genre_id) REFERENCES genres(id)
+);

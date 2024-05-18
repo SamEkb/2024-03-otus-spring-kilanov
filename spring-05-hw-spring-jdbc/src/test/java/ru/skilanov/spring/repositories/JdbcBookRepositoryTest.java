@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
 @JdbcTest
 @Import({JdbcBookRepository.class})
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class JdbcBookRepositoryTest {
 
     public static final long ID = 1L;

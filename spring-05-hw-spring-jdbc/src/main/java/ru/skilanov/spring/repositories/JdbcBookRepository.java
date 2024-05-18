@@ -1,6 +1,5 @@
 package ru.skilanov.spring.repositories;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,20 +33,17 @@ public class JdbcBookRepository implements BookRepository {
     @Override
     public Optional<Book> findById(long id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
-        try {
-            return Optional.ofNullable(namedParameterJdbcOperations.queryForObject("""
-                    SELECT b.id AS bookId, b.title AS bookTitle,
-                    a.id AS authorId, a.full_name AS authorName,
-                    g.id AS genreId, g.name AS genreName 
-                    FROM books b
-                    JOIN authors a ON a.id = b.author_id 
-                    JOIN genres g ON g.id = b.genre_id
-                    WHERE b.id = :id
-                    """, params, new BookRowMapper()
-            ));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+
+        return namedParameterJdbcOperations.query("""
+                SELECT b.id AS bookId, b.title AS bookTitle,
+                a.id AS authorId, a.full_name AS authorName,
+                g.id AS genreId, g.name AS genreName 
+                FROM books b
+                JOIN authors a ON a.id = b.author_id 
+                JOIN genres g ON g.id = b.genre_id
+                WHERE b.id = :id
+                """, params, new BookRowMapper()
+        ).stream().findFirst();
     }
 
     @Override

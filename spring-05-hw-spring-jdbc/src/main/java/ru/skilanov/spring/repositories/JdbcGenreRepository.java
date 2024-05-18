@@ -1,6 +1,5 @@
 package ru.skilanov.spring.repositories;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -38,15 +37,12 @@ public class JdbcGenreRepository implements GenreRepository {
     @Override
     public Optional<Genre> findById(long id) {
         Map<String, Object> params = Collections.singletonMap("id", id);
-        try {
-            return Optional.ofNullable(namedParameterJdbcOperations.queryForObject(
-                    "SELECT id, name FROM genres WHERE id = :id",
-                    params,
-                    new GenreRowMapper()
-            ));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+
+        return namedParameterJdbcOperations.query(
+                "SELECT id, name FROM genres WHERE id = :id",
+                params,
+                new GenreRowMapper()
+        ).stream().findFirst();
     }
 
     @Override
