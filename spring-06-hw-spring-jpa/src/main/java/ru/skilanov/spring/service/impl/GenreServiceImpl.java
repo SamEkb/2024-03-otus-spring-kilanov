@@ -2,6 +2,7 @@ package ru.skilanov.spring.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.models.Genre;
 import ru.skilanov.spring.repositories.api.GenreRepository;
@@ -25,6 +26,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Genre insert(String name) {
         var genre = Genre.builder()
@@ -33,12 +35,14 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.save(genre);
     }
 
+    @Transactional
     @Override
     public Genre update(long id, String name) {
         var genre = new Genre(id, name);
         return genreRepository.save(genre);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         var genre = genreRepository.findById(id).orElseThrow(EntityNotFoundException::new);

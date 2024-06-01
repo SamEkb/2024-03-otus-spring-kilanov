@@ -2,6 +2,7 @@ package ru.skilanov.spring.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.models.Author;
 import ru.skilanov.spring.repositories.api.AuthorRepository;
@@ -25,6 +26,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Author insert(String fullName) {
         var author = Author.builder()
@@ -33,12 +35,14 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.save(author);
     }
 
+    @Transactional
     @Override
     public Author update(long id, String fullName) {
         var author = new Author(id, fullName);
         return authorRepository.save(author);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         var author = authorRepository.findById(id).orElseThrow(EntityNotFoundException::new);

@@ -36,7 +36,7 @@ public class Comment {
     @EqualsAndHashCode.Include
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 }

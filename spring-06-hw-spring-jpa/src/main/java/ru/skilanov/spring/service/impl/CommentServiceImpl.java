@@ -2,6 +2,7 @@ package ru.skilanov.spring.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.models.Comment;
 import ru.skilanov.spring.repositories.api.CommentRepository;
@@ -29,6 +30,7 @@ public class CommentServiceImpl implements CommentService {
         return repository.findAllByBookId(bookId);
     }
 
+    @Transactional
     @Override
     public Comment insert(String description, long bookId) {
         var book = bookService.findById(bookId).orElseThrow(EntityNotFoundException::new);
@@ -39,6 +41,7 @@ public class CommentServiceImpl implements CommentService {
         return repository.save(comment);
     }
 
+    @Transactional
     @Override
     public Comment update(long id, String description) {
         var comment = Comment.builder()
@@ -48,6 +51,7 @@ public class CommentServiceImpl implements CommentService {
         return repository.save(comment);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         var comment = repository.findById(id).orElseThrow(EntityNotFoundException::new);

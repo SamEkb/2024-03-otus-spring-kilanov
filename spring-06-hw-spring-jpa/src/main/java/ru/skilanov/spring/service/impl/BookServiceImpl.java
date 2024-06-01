@@ -2,6 +2,7 @@ package ru.skilanov.spring.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.repositories.api.BookRepository;
@@ -32,6 +33,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Book insert(String title, long authorId, long genreId) {
         var author = authorService.findById(authorId).orElseThrow(EntityNotFoundException::new);
@@ -44,11 +46,13 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional
     @Override
     public Book update(Book book) {
         return bookRepository.save(book);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         var book = bookRepository.findById(id).orElseThrow(EntityNotFoundException::new);
