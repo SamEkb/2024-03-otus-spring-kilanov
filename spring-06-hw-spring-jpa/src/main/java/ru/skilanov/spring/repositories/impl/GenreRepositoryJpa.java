@@ -41,7 +41,10 @@ public class GenreRepositoryJpa implements GenreRepository {
     }
 
     @Override
-    public void delete(Genre genre) {
-        entityManager.remove(genre);
+    public void delete(long id) {
+        Genre genre = entityManager.find(Genre.class, id);
+        if (genre != null) {
+            entityManager.remove(genre);
+        }
     }
 }

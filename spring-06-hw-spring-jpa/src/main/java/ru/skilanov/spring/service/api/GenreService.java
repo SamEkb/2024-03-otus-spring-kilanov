@@ -1,18 +1,18 @@
 package ru.skilanov.spring.service.api;
 
-import ru.skilanov.spring.models.Genre;
+import ru.skilanov.spring.dto.GenreDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface GenreService {
-    Optional<Genre> findById(long id);
+    Optional<GenreDto> findById(long id);
 
-    List<Genre> findAll();
+    List<GenreDto> findAll();
 
-    Genre insert(String name);
+    GenreDto create(String name);
 
-    Genre update(long id, String name);
+    GenreDto update(long id, String name);
 
     void deleteById(long id);
 }

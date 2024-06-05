@@ -13,5 +13,5 @@ public interface GenreRepository {
 
     Genre save(Genre genre);
 
-    void delete(Genre genre);
+    void delete(long id);
 }

@@ -98,8 +98,7 @@ public class CommentRepositoryJpaTest {
     @DisplayName("должен удалять комментарий")
     @Test
     void whenDeleteCommentThenItDeleted() {
-        var comment = repositoryJpa.findById(ID).orElse(null);
-        repositoryJpa.delete(comment);
+        repositoryJpa.delete(ID);
         assertThat(repositoryJpa.findById(ID)).isEmpty();
     }
 

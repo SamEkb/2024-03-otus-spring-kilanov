@@ -42,7 +42,10 @@ public class CommentRepositoryJpa implements CommentRepository {
     }
 
     @Override
-    public void delete(Comment comment) {
-        entityManager.remove(comment);
+    public void delete(long id) {
+        Comment comment = entityManager.find(Comment.class, id);
+        if (comment != null) {
+            entityManager.remove(comment);
+        }
     }
 }

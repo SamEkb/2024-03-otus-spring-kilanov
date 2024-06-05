@@ -129,8 +129,7 @@ class BookRepositoryJpaTest {
     @DisplayName("должен удалять книгу")
     @Test
     void shouldDeleteBook() {
-        var book = bookRepository.findById(ID).orElse(null);
-        bookRepository.delete(book);
+        bookRepository.delete(ID);
         assertThat(bookRepository.findById(ID)).isEmpty();
     }
 

@@ -1,18 +1,18 @@
 package ru.skilanov.spring.service.api;
 
-import ru.skilanov.spring.models.Comment;
+import ru.skilanov.spring.dto.CommentDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CommentService {
-    Optional<Comment> findById(long id);
+    Optional<CommentDto> findById(long id);
 
-    List<Comment> findAllByBookId(long bookId);
+    List<CommentDto> findAllByBookId(long bookId);
 
-    Comment insert(String description, long bookId);
+    CommentDto create(String description, long bookId);
 
-    Comment update(long id, String description);
+    CommentDto update(long id, String description, long bookId);
 
     void deleteById(long id);
 }

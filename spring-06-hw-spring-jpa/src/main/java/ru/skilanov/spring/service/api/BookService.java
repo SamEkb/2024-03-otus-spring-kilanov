@@ -1,19 +1,19 @@
 package ru.skilanov.spring.service.api;
 
 
-import ru.skilanov.spring.models.Book;
+import ru.skilanov.spring.dto.BookDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
-    Optional<Book> findById(long id);
+    Optional<BookDto> findById(long id);
 
-    List<Book> findAll();
+    List<BookDto> findAll();
 
-    Book insert(String title, long authorId, long genreId);
+    BookDto create(String title, long authorId, long genreId);
 
-    Book update(Book book);
+    BookDto update(long id, String title, long authorId, long genreId);
 
     void deleteById(long id);
 }

@@ -32,7 +32,7 @@ public class GenreCommands {
 
     @ShellMethod(value = "Insert genre", key = "gins")
     public String insertGenre(String name) {
-        var savedGenre = genreService.insert(name);
+        var savedGenre = genreService.create(name);
         return genreConverter.genreToString(savedGenre);
     }
 

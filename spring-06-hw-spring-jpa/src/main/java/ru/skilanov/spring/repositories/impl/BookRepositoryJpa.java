@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.repositories.api.BookRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +24,18 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(entityManager.find(Book.class, id));
+        EntityGraph<?> graph = entityManager.getEntityGraph("bookWithAuthorAndGenreGraph");
+        return Optional.ofNullable(entityManager.find(
+                        Book.class,
+                        id,
+                        Collections.singletonMap("javax.persistence.fetchgraph", graph)
+                )
+        );
     }
 
     @Override
     public List<Book> findAll() {
-        EntityGraph<?> graph = entityManager.getEntityGraph("bookPropertiesEntityGraph");
+        EntityGraph<?> graph = entityManager.getEntityGraph("bookWithAuthorAndGenreGraph");
         TypedQuery<Book> query = entityManager.createQuery("select distinct b from Book as b", Book.class);
         query.setHint(FETCH.getKey(), graph);
 
@@ -45,7 +52,10 @@ public class BookRepositoryJpa implements BookRepository {
     }
 
     @Override
-    public void delete(Book book) {
-        entityManager.remove(book);
+    public void delete(long id) {
+        Book book = entityManager.find(Book.class, id);
+        if (book != null) {
+            entityManager.remove(book);
+        }
     }
 }

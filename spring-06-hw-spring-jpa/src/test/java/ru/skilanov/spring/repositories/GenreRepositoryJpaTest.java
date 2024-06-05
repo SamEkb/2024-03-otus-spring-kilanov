@@ -94,8 +94,7 @@ public class GenreRepositoryJpaTest {
     @DisplayName("должен удалять жанр")
     @Test
     void whenDeleteGenreThenItDeleted() {
-        var genre = genreRepository.findById(ID).orElse(null);
-        genreRepository.delete(genre);
+        genreRepository.delete(ID);
         assertThat(genreRepository.findById(ID)).isEmpty();
     }
 

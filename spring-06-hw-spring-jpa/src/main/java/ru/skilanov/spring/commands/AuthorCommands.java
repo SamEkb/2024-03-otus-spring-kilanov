@@ -32,7 +32,7 @@ public class AuthorCommands {
 
     @ShellMethod(value = "Insert author", key = "ains")
     public String insertAuthor(String fullName) {
-        var savedAuthor = authorService.insert(fullName);
+        var savedAuthor = authorService.create(fullName);
         return authorConverter.authorToString(savedAuthor);
     }
 

@@ -94,8 +94,7 @@ public class AuthorRepositoryJpaTest {
     @DisplayName("должен удалять автора")
     @Test
     void whenDeleteAuthorThenItDeleted() {
-        var author = authorRepository.findById(ID).orElse(null);
-        authorRepository.delete(author);
+        authorRepository.delete(ID);
         assertThat(authorRepository.findById(ID)).isEmpty();
     }
 
