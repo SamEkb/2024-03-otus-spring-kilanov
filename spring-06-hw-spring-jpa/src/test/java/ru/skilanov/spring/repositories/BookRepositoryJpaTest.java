@@ -76,38 +76,24 @@ class BookRepositoryJpaTest {
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
-        var expectedBook = Book.builder()
-                .id(0)
-                .title("Book_" + ID)
+        var expectedBook = Book.builder().id(0).title("Book_" + ID)
                 .author(authorRepository.findById(ID).orElseThrow())
                 .genre(genreRepository.findById(ID).orElseThrow())
                 .build();
         var returnedBook = bookRepository.save(expectedBook);
-        assertThat(returnedBook).isNotNull()
-                .matches(book -> book.getId() > 0)
+        assertThat(returnedBook).isNotNull().matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
-
-        assertThat(bookRepository.findById(returnedBook.getId()))
-                .isPresent()
-                .get()
+        assertThat(bookRepository.findById(returnedBook.getId())).isPresent().get()
                 .isEqualTo(returnedBook);
     }
 
     @DisplayName("должен сохранять измененную книгу")
     @Test
     void shouldSaveUpdatedBook() {
-        var actualBook = Book.builder()
-                .id(ID)
-                .title("Book_" + 2)
-                .author(dbAuthors.get(2))
-                .genre(dbGenres.get(2))
+        var actualBook = Book.builder().id(ID).title("Book_" + 2).author(dbAuthors.get(2)).genre(dbGenres.get(2))
                 .build();
 
-        var expectedBook = Book.builder()
-                .id(ID)
-                .title("Book_" + ID)
-                .author(dbAuthors.get(2))
-                .genre(dbGenres.get(2))
+        var expectedBook = Book.builder().id(ID).title("Book_" + ID).author(dbAuthors.get(2)).genre(dbGenres.get(2))
                 .build();
 
         assertThat(bookRepository.findById(expectedBook.getId()))

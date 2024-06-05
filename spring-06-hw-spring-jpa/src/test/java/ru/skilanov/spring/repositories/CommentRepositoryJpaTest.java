@@ -23,16 +23,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import({CommentRepositoryJpa.class, BookRepositoryJpa.class})
 public class CommentRepositoryJpaTest {
 
-    @Autowired
-    CommentRepositoryJpa repositoryJpa;
+    public static final long ID = 1L;
 
     @Autowired
-    BookRepositoryJpa bookRepositoryJpa;
+    private CommentRepositoryJpa repositoryJpa;
+
+    @Autowired
+    private BookRepositoryJpa bookRepositoryJpa;
 
     @Autowired
     private TestEntityManager testEntityManager;
-
-    public static final long ID = 1L;
 
     @DisplayName("должен загружать комментарий по id")
     @ParameterizedTest

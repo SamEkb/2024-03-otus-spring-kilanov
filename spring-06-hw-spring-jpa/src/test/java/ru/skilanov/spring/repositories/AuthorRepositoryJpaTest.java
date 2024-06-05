@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthorRepositoryJpaTest {
 
     public static final long ID = 1L;
+
     @Autowired
     private AuthorRepositoryJpa authorRepository;
 
