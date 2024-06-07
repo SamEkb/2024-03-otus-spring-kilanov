@@ -57,6 +57,4 @@ public class Book {
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "book", fetch = FetchType.LAZY)
-    private List<Comment> comments;
 }
