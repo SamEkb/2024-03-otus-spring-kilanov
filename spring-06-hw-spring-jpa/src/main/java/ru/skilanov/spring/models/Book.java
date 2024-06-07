@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.EqualsAndHashCode;
@@ -21,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
 
 @Entity
 @Table(name = "books")
