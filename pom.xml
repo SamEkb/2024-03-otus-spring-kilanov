@@ -17,6 +17,7 @@
         <module>spring-04-hw-spring-shell</module>
         <module>spring-05-hw-spring-jdbc</module>
         <module>spring-06-hw-spring-jpa</module>
+        <module>spring-07-hw-spring-data-jpa</module>
     </modules>
 
 </project>
