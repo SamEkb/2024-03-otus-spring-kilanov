@@ -53,8 +53,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void deleteById(long id) {
-        var comment = repository.findById(id).orElseThrow(EntityNotFoundException::new);
-        repository.delete(comment);
+        repository.deleteById(id);
     }
 
     private CommentDto save(long id, String description, long bookId) {

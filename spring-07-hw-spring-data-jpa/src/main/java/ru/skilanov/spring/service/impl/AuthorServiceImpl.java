@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.dto.AuthorDto;
-import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.mapper.AuthorMapper;
 import ru.skilanov.spring.models.Author;
 import ru.skilanov.spring.repositories.AuthorRepository;
@@ -59,7 +58,6 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional
     @Override
     public void deleteById(long id) {
-        Author author = authorRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        authorRepository.delete(author);
+        authorRepository.deleteById(id);
     }
 }

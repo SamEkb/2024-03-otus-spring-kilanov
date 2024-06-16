@@ -17,8 +17,10 @@ import ru.skilanov.spring.mapper.CommentMapperImpl;
 import ru.skilanov.spring.mapper.GenreMapperImpl;
 import ru.skilanov.spring.repositories.BookRepository;
 import ru.skilanov.spring.service.api.BookService;
+import ru.skilanov.spring.service.api.CommentService;
 import ru.skilanov.spring.service.impl.AuthorServiceImpl;
 import ru.skilanov.spring.service.impl.BookServiceImpl;
+import ru.skilanov.spring.service.impl.CommentServiceImpl;
 import ru.skilanov.spring.service.impl.GenreServiceImpl;
 
 import java.util.List;
@@ -28,9 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import({BookServiceImpl.class, AuthorServiceImpl.class,
-        GenreServiceImpl.class, AuthorMapperImpl.class,
-        GenreMapperImpl.class, BookMapperImpl.class,
-        CommentMapperImpl.class
+        GenreServiceImpl.class, CommentServiceImpl.class,
+        AuthorMapperImpl.class, CommentMapperImpl.class,
+        GenreMapperImpl.class, BookMapperImpl.class
 })
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -43,6 +45,9 @@ public class BookServiceImplTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CommentService commentService;
 
     private GenreDto genre;
 
@@ -73,7 +78,7 @@ public class BookServiceImplTest {
 
         var books = bookService.findAll();
 
-        assertThat(books).hasSize(expectedBooks.size());
+        assertThat(books).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -97,6 +102,7 @@ public class BookServiceImplTest {
         assertThat(bookService.findById(ID)).isPresent();
         bookService.deleteById(ID);
         assertThat(bookService.findById(ID)).isNotPresent();
+        assertThat(commentService.findAllByBookId(ID)).isEmpty();
     }
 
     private static List<AuthorDto> getDbAuthors() {
@@ -115,7 +121,7 @@ public class BookServiceImplTest {
         return IntStream.range(1, 4).boxed()
                 .map(id -> BookDto.builder()
                         .id(id)
-                        .title("BookTitle_" + id)
+                        .title("Book_" + id)
                         .author(dbAuthors.get(id - 1))
                         .genre(dbGenres.get(id - 1))
                         .build()

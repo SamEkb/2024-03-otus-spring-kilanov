@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.dto.GenreDto;
-import ru.skilanov.spring.exception.EntityNotFoundException;
 import ru.skilanov.spring.mapper.GenreMapper;
 import ru.skilanov.spring.models.Genre;
 import ru.skilanov.spring.repositories.GenreRepository;
@@ -49,8 +48,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     @Override
     public void deleteById(long id) {
-        var genre = genreRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        genreRepository.delete(genre);
+        genreRepository.deleteById(id);
     }
 
     private GenreDto save(long id, String name) {

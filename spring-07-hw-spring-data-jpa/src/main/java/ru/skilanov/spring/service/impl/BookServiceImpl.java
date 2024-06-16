@@ -57,8 +57,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public void deleteById(long id) {
-        var book = bookRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        bookRepository.delete(book);
+        bookRepository.deleteById(id);
     }
 
     private BookDto save(long id, String title, long authorId, long genreId) {
