@@ -1,0 +1,14 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      database: library
+      username: root
+      password: example
+      host: localhost
+      port: 27017
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.skilanov.spring.changelog
