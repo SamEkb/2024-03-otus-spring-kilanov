@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
@@ -11,9 +12,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import ru.skilanov.spring.exception.EntityNotFoundException;
+import ru.skilanov.spring.listener.BookCascadeDeleteListener;
 import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.repositories.AuthorRepository;
 import ru.skilanov.spring.repositories.BookRepository;
+import ru.skilanov.spring.repositories.CommentRepository;
 import ru.skilanov.spring.repositories.GenreRepository;
 
 import java.util.Optional;
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Books repository test")
 @DataMongoTest
 @Testcontainers
+@Import(BookCascadeDeleteListener.class)
 class BookRepositoryTest {
 
     private static final String DEFAULT_ID_ONE = "1";
@@ -43,6 +47,9 @@ class BookRepositoryTest {
 
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -91,10 +98,17 @@ class BookRepositoryTest {
     void shouldCorrectDeleteBookById() {
         Book bookForDeleting = bookRepository.findAll().get(0);
 
+        var commentsBeforeDeleting = commentRepository.findAllByBookId(bookForDeleting.getId());
+
+        assertThat(commentsBeforeDeleting).isNotEmpty();
+
         bookRepository.delete(bookForDeleting);
 
-        Book deletedBook = bookRepository.findById(bookForDeleting.getId())
-                .orElse(null);
+        var commentsAfterDeleting = commentRepository.findAllByBookId(bookForDeleting.getId());
+
+        assertThat(commentsAfterDeleting).isEmpty();
+
+        Book deletedBook = bookRepository.findById(bookForDeleting.getId()).orElse(null);
 
         assertThat(deletedBook).isNull();
     }

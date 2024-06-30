@@ -41,13 +41,24 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentDto create(String description, String bookId) {
-        return save(null, description, bookId);
+        var book = bookRepository.findById(bookId).orElseThrow(EntityNotFoundException::new);
+        var comment = Comment.builder()
+                .description(description)
+                .book(book)
+                .build();
+
+        var savedComment = repository.save(comment);
+        return mapper.toDto(savedComment);
     }
 
     @Transactional
     @Override
-    public CommentDto update(String id, String description, String bookId) {
-        return save(id, description, bookId);
+    public CommentDto update(String id, String description) {
+        var comment = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        comment.setDescription(description);
+
+        var savedComment = repository.save(comment);
+        return mapper.toDto(savedComment);
     }
 
     @Transactional
@@ -56,15 +67,9 @@ public class CommentServiceImpl implements CommentService {
         repository.deleteById(id);
     }
 
-    private CommentDto save(String id, String description, String bookId) {
-        var book = bookRepository.findById(bookId).orElseThrow(EntityNotFoundException::new);
-        var comment = Comment.builder()
-                .id(id)
-                .description(description)
-                .book(book)
-                .build();
-
-        var savedComment = repository.save(comment);
-        return mapper.toDto(savedComment);
+    @Transactional
+    @Override
+    public void deleteAllByBookId(String id) {
+        repository.deleteAllByBookId(id);
     }
 }

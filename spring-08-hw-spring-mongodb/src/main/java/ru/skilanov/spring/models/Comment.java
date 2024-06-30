@@ -29,6 +29,6 @@ public class Comment {
     @ToString.Include
     private String description;
 
-    @DBRef
+    @DBRef(lazy = true)
     private Book book;
 }

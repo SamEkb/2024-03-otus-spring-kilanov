@@ -17,6 +17,7 @@ import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.models.Genre;
 import ru.skilanov.spring.repositories.AuthorRepository;
 import ru.skilanov.spring.repositories.BookRepository;
+import ru.skilanov.spring.repositories.CommentRepository;
 import ru.skilanov.spring.repositories.GenreRepository;
 import ru.skilanov.spring.service.impl.BookServiceImpl;
 
@@ -56,6 +57,9 @@ public class BookServiceImplTest {
     @MockBean
     private GenreRepository genreRepository;
 
+    @MockBean
+    private CommentRepository commentRepository;
+
     @Autowired
     private BookServiceImpl bookService;
 
@@ -80,6 +84,7 @@ public class BookServiceImplTest {
         var genre = new Genre();
         Book book1 = new Book(ONE_ID, BOOK_TITLE_KARENINA, new Author(), new Genre());
         when(bookRepository.save(book1)).thenReturn(book1);
+        when(bookRepository.findById(ONE_ID)).thenReturn(Optional.of(book1));
         when(authorRepository.findById(ONE_ID)).thenReturn(Optional.of(author));
         when(genreRepository.findById(ONE_ID)).thenReturn(Optional.of(genre));
         bookService.update(ONE_ID, BOOK_TITLE_KARENINA, ONE_ID, ONE_ID);
@@ -115,6 +120,7 @@ public class BookServiceImplTest {
     public void whenDeleteBookThenItDeleted() {
         bookService.deleteById(ONE_ID);
         verify(bookRepository, times(ONE)).deleteById(ONE_ID);
+        verify(commentRepository, times(ONE)).deleteAllByBookId(ONE_ID);
     }
 }
 

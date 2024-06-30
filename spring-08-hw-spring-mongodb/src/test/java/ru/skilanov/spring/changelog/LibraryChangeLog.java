@@ -2,9 +2,15 @@ package ru.skilanov.spring.changelog;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
+import ru.skilanov.spring.models.Author;
+import ru.skilanov.spring.models.Book;
+import ru.skilanov.spring.models.Comment;
+import ru.skilanov.spring.models.Genre;
+import ru.skilanov.spring.repositories.AuthorRepository;
+import ru.skilanov.spring.repositories.BookRepository;
+import ru.skilanov.spring.repositories.CommentRepository;
+import ru.skilanov.spring.repositories.GenreRepository;
 
 @ChangeLog
 public class LibraryChangeLog {
@@ -13,45 +19,21 @@ public class LibraryChangeLog {
         db.drop();
     }
 
-    @ChangeSet(order = "002", id = "insertTolstoy", author = "kilanov")
-    public void insertTolstoy(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("authors");
-        var doc = new Document().append("name", "Tolstoy");
-        myCollection.insertOne(doc);
-    }
+    @ChangeSet(order = "002", id = "fillData", author = "kilanov")
+    public void fillData(AuthorRepository authorRepository, GenreRepository genreRepository,
+                         BookRepository bookRepository, CommentRepository commentRepository) {
+        Author tolstoy = authorRepository.save(new Author("1", "Tolstoy"));
+        Author gogol = authorRepository.save(new Author("2", "Author_2"));
 
-    @ChangeSet(order = "003", id = "insertGogol", author = "kilanov")
-    public void insertGogol(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("authors");
-        var doc = new Document().append("name", "Gogol");
-        myCollection.insertOne(doc);
-    }
+        Genre drama = genreRepository.save(new Genre("1", "Drama"));
+        Genre horror = genreRepository.save(new Genre("2", "Horror"));
 
-    @ChangeSet(order = "004", id = "insertDrama", author = "kilanov")
-    public void insertDrama(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("genres");
-        var doc = new Document().append("name", "Drama");
-        myCollection.insertOne(doc);
-    }
 
-    @ChangeSet(order = "005", id = "insertHorror", author = "kilanov")
-    public void insertHorror(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("genres");
-        var doc = new Document().append("name", "Horror");
-        myCollection.insertOne(doc);
-    }
+        Book book1 = bookRepository.save(new Book("1", "voina i mir", tolstoy, drama));
+        Book book2 = bookRepository.save(new Book("2", "vii", gogol, horror));
 
-    @ChangeSet(order = "006", id = "insertBook", author = "kilanov")
-    public void insertBook(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("books");
-        var doc = new Document().append("title", "voina i mir");
-        myCollection.insertOne(doc);
-    }
+        commentRepository.save(new Comment("1", "awesome", book1));
+        commentRepository.save(new Comment("2", "interesting", book2));
 
-    @ChangeSet(order = "007", id = "insertComment", author = "kilanov")
-    public void insertComment(MongoDatabase db) {
-        MongoCollection<Document> myCollection = db.getCollection("comments");
-        var doc = new Document().append("description", "awesome");
-        myCollection.insertOne(doc);
     }
 }

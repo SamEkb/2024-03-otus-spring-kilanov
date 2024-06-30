@@ -9,6 +9,7 @@ import ru.skilanov.spring.mapper.BookMapper;
 import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.repositories.AuthorRepository;
 import ru.skilanov.spring.repositories.BookRepository;
+import ru.skilanov.spring.repositories.CommentRepository;
 import ru.skilanov.spring.repositories.GenreRepository;
 import ru.skilanov.spring.service.api.BookService;
 
@@ -24,6 +25,8 @@ public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
 
     private final GenreRepository genreRepository;
+
+    private final CommentRepository commentRepository;
 
     private final BookMapper bookMapper;
 
@@ -45,31 +48,37 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto create(String title, String authorId, String genreId) {
-        return save(null, title, authorId, genreId);
+        var author = authorRepository.findById(authorId).orElseThrow(EntityNotFoundException::new);
+        var genre = genreRepository.findById(genreId).orElseThrow(EntityNotFoundException::new);
+        var book = Book.builder()
+                .title(title)
+                .author(author)
+                .genre(genre)
+                .build();
+
+        var savedBook = bookRepository.save(book);
+        return bookMapper.toDto(savedBook);
     }
 
     @Transactional
     @Override
     public BookDto update(String id, String title, String authorId, String genreId) {
-        return save(id, title, authorId, genreId);
+        var book = bookRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        var author = authorRepository.findById(authorId).orElseThrow(EntityNotFoundException::new);
+        var genre = genreRepository.findById(genreId).orElseThrow(EntityNotFoundException::new);
+        book.setTitle(title);
+        book.setGenre(genre);
+        book.setAuthor(author);
+
+        var savedBook = bookRepository.save(book);
+        return bookMapper.toDto(savedBook);
     }
 
     @Transactional
     @Override
     public void deleteById(String id) {
         bookRepository.deleteById(id);
+        commentRepository.deleteAllByBookId(id);
     }
 
-    private BookDto save(String id, String title, String authorId, String genreId) {
-        var author = authorRepository.findById(authorId).orElseThrow(EntityNotFoundException::new);
-        var genre = genreRepository.findById(genreId).orElseThrow(EntityNotFoundException::new);
-        var book = Book.builder()
-                .id(id)
-                .title(title)
-                .author(author)
-                .genre(genre)
-                .build();
-        var savedBook = bookRepository.save(book);
-        return bookMapper.toDto(savedBook);
-    }
 }

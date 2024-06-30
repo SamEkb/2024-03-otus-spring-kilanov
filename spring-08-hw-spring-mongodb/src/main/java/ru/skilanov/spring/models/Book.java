@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -30,9 +29,7 @@ public class Book {
     @ToString.Include
     private String title;
 
-    @DBRef
     private Author author;
 
-    @DBRef
     private Genre genre;
 }

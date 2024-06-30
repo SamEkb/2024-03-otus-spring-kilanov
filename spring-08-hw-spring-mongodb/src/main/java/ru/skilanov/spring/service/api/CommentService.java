@@ -12,7 +12,9 @@ public interface CommentService {
 
     CommentDto create(String description, String bookId);
 
-    CommentDto update(String id, String description, String bookId);
+    CommentDto update(String id, String description);
 
     void deleteById(String id);
+
+    void deleteAllByBookId(String id);
 }
