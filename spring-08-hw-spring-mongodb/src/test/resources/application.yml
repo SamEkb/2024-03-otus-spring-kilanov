@@ -1,0 +1,9 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.skilanov.spring.changelog
