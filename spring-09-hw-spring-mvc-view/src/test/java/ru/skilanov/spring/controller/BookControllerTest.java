@@ -1,6 +1,5 @@
 package ru.skilanov.spring.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +10,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.skilanov.spring.dto.AuthorDto;
 import ru.skilanov.spring.dto.BookDto;
 import ru.skilanov.spring.dto.GenreDto;
+import ru.skilanov.spring.dto.request.BookCreateDto;
+import ru.skilanov.spring.dto.request.BookUpdateDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.service.api.AuthorService;
 import ru.skilanov.spring.service.api.BookService;
 import ru.skilanov.spring.service.api.GenreService;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,10 +31,7 @@ public class BookControllerTest {
 
     public static final String BOOK_TITLE_KARENINA = "Anna Karenina";
 
-    public static final long ONE = 1;
-
-    @Autowired
-    private ObjectMapper mapper;
+    public static final Long ONE = 1L;
 
     @Autowired
     private MockMvc mvc;
@@ -67,16 +67,15 @@ public class BookControllerTest {
 
     @Test
     void whenAddBookThenItCreated() throws Exception {
-        BookDto book1 = BookDto.builder()
+        var book1 = BookCreateDto.builder()
                 .title(BOOK_TITLE_KARENINA)
-                .genre(new GenreDto(ONE, ""))
-                .author(new AuthorDto(ONE, ""))
+                .genreId(ONE)
+                .authorId(ONE)
                 .build();
         this.mvc
                 .perform(post("/create")
+                        .flashAttr("book", book1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(book1))
-
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
@@ -84,7 +83,7 @@ public class BookControllerTest {
 
     @Test
     void whenEditBookThenReturnsRightView() throws Exception {
-        BookDto book1 = BookDto.builder()
+        var book1 = BookDto.builder()
                 .title(BOOK_TITLE_KARENINA)
                 .genre(new GenreDto(ONE, ""))
                 .author(new AuthorDto(ONE, ""))
@@ -104,15 +103,15 @@ public class BookControllerTest {
 
     @Test
     void whenEditBookThenItEdited() throws Exception {
-        BookDto book1 = BookDto.builder()
+        var book1 = BookUpdateDto.builder()
                 .title(BOOK_TITLE_KARENINA)
-                .genre(new GenreDto(ONE, ""))
-                .author(new AuthorDto(ONE, ""))
+                .genreId(ONE)
+                .authorId(ONE)
                 .build();
 
         this.mvc
                 .perform(post("/edit")
-                        .content(mapper.writeValueAsString(book1))
+                        .flashAttr("book", book1)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().is3xxRedirection())
@@ -127,5 +126,37 @@ public class BookControllerTest {
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void whenNonExistentBookThenReturns404() throws Exception {
+        when(bookService.findById(anyLong())).thenThrow(new NotFoundException());
+
+        mvc.perform(get("/edit").param("id", "1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenNonExistentAuthorThenReturns404() throws Exception {
+        when(authorService.findAll()).thenThrow(new NotFoundException());
+
+        mvc.perform(get("/create"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenNonExistentGenreThenReturns404() throws Exception {
+        when(genreService.findAll()).thenThrow(new NotFoundException());
+
+        mvc.perform(get("/create"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenServiceLayerExceptionThenReturns500() throws Exception {
+        when(bookService.findById(ONE)).thenThrow(new RuntimeException("Internal Server Error"));
+        this.mvc
+                .perform(get("/book/" + ONE))
+                .andExpect(status().isInternalServerError());
     }
 }

@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.skilanov.spring.dto.AuthorDto;
 import ru.skilanov.spring.dto.BookDto;
 import ru.skilanov.spring.dto.GenreDto;
+import ru.skilanov.spring.dto.request.BookCreateDto;
+import ru.skilanov.spring.dto.request.BookUpdateDto;
 import ru.skilanov.spring.service.api.AuthorService;
 import ru.skilanov.spring.service.api.BookService;
 import ru.skilanov.spring.service.api.GenreService;
@@ -38,12 +41,12 @@ public class BookController {
         List<GenreDto> genres = genreService.findAll();
         model.addAttribute("authors", authors);
         model.addAttribute("genres", genres);
-        model.addAttribute("book", new BookDto());
+        model.addAttribute("book", new BookCreateDto());
         return "create";
     }
 
     @PostMapping(value = "/create")
-    public String createBook(BookDto dto) {
+    public String createBook(@ModelAttribute("book") BookCreateDto dto) {
         bookService.create(dto);
         return "redirect:/";
     }
@@ -55,12 +58,17 @@ public class BookController {
         List<GenreDto> genres = genreService.findAll();
         model.addAttribute("authors", authors);
         model.addAttribute("genres", genres);
-        model.addAttribute("book", book);
+        model.addAttribute("book", new BookUpdateDto(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthor().getId(),
+                book.getGenre().getId()
+        ));
         return "edit";
     }
 
     @PostMapping(value = "/edit")
-    public String saveBook(BookDto dto) {
+    public String saveBook(@ModelAttribute("book") BookUpdateDto dto) {
         bookService.update(dto);
         return "redirect:/";
     }

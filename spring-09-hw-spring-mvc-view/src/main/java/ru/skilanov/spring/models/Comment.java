@@ -33,7 +33,7 @@ public class Comment {
     @EqualsAndHashCode.Include
     @ToString.Include
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "description")
     @EqualsAndHashCode.Include

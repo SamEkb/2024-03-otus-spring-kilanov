@@ -4,10 +4,9 @@ package ru.skilanov.spring.service.api;
 import ru.skilanov.spring.dto.AuthorDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AuthorService {
-    Optional<AuthorDto> findById(long id);
+    AuthorDto findById(long id);
 
     List<AuthorDto> findAll();
 

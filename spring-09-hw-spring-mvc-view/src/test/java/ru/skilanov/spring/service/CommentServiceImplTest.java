@@ -13,6 +13,7 @@ import ru.skilanov.spring.dto.AuthorDto;
 import ru.skilanov.spring.dto.BookDto;
 import ru.skilanov.spring.dto.CommentDto;
 import ru.skilanov.spring.dto.GenreDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.mapper.CommentMapperImpl;
 import ru.skilanov.spring.mapper.AuthorMapperImpl;
 import ru.skilanov.spring.mapper.GenreMapperImpl;
@@ -26,9 +27,10 @@ import ru.skilanov.spring.service.impl.GenreServiceImpl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @DataJpaTest
 @Import({CommentServiceImpl.class, BookServiceImpl.class,
@@ -63,21 +65,21 @@ public class CommentServiceImplTest {
         genre = new GenreDto(ID, "Genre_" + ID);
         author = new AuthorDto(ID, "Author_" + ID);
         book = new BookDto(ID, "Book_" + ID, author, genre);
-        savedComment = new CommentDto(4L, "Comment_" + ID, book);
-        expectedComment = new CommentDto(ID, "Comment_" + ID, book);
+        savedComment = new CommentDto(4L, "Comment_" + ID);
+        expectedComment = new CommentDto(ID, "Comment_" + ID);
     }
 
     @Test
     public void whenFindCommentByIdThenItReturns() {
         var comment = commentService.findById(ID);
 
-        Assertions.assertThat(comment).isPresent().get().usingRecursiveComparison().isEqualTo(expectedComment);
+        Assertions.assertThat(comment).usingRecursiveComparison().isEqualTo(expectedComment);
     }
 
     @Test
     public void whenFindAllCommentsThenAllFound() {
         var comment = getDbComments().get(0);
-        comment.setBook(book);
+
         var expectedComments = Collections.singletonList(comment);
 
         var comments = commentService.findAllByBookId(ID);
@@ -95,22 +97,22 @@ public class CommentServiceImplTest {
 
     @Test
     public void whenUpdateCommentThenItUpdated() {
-        var updatedComment = new CommentDto(1, "Comment_" + 2, book);
+        var updatedComment = new CommentDto(ID, "Comment_" + 2);
 
-        var resultComment = commentService.update(ID, "Comment_" + 2, ID);
+        var resultComment = commentService.update(ID, "Comment_" + 2);
 
         assertThat(resultComment).isEqualTo(updatedComment);
     }
 
     @Test
-    public void whenDeleteCommentThenItDeleted() {
-        Assertions.assertThat(commentService.findById(ID)).isPresent();
+    public void whenDeleteCommentThenItThrowsException() {
+        Assertions.assertThat(commentService.findById(ID)).isNotNull();
         commentService.deleteById(ID);
-        Assertions.assertThat(commentService.findById(ID)).isNotPresent();
+        assertThrowsExactly(NotFoundException.class, () -> commentService.findById(ID));
     }
 
     private static List<CommentDto> getDbComments() {
-        return IntStream.range(1, 4).boxed()
+        return LongStream.range(1, 4).boxed()
                 .map(id -> CommentDto.builder()
                         .id(id)
                         .description("Comment_" + id)

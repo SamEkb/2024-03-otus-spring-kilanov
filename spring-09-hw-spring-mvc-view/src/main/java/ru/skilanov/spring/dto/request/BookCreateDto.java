@@ -1,4 +1,4 @@
-package ru.skilanov.spring.dto;
+package ru.skilanov.spring.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommentDto {
+public class BookCreateDto {
+    private String title;
 
-    private Long id;
+    private Long authorId;
 
-    private String description;
-
+    private Long genreId;
 }

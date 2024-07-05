@@ -3,10 +3,9 @@ package ru.skilanov.spring.service.api;
 import ru.skilanov.spring.dto.GenreDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GenreService {
-    Optional<GenreDto> findById(long id);
+    GenreDto findById(long id);
 
     List<GenreDto> findAll();
 

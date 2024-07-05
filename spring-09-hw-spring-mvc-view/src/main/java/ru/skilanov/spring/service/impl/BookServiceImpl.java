@@ -3,8 +3,10 @@ package ru.skilanov.spring.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.skilanov.spring.dto.request.BookCreateDto;
 import ru.skilanov.spring.dto.BookDto;
-import ru.skilanov.spring.exception.EntityNotFoundException;
+import ru.skilanov.spring.dto.request.BookUpdateDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.mapper.BookMapper;
 import ru.skilanov.spring.models.Book;
 import ru.skilanov.spring.repositories.AuthorRepository;
@@ -31,7 +33,7 @@ public class BookServiceImpl implements BookService {
     public BookDto findById(long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
@@ -44,9 +46,9 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto create(BookDto dto) {
-        var genre = genreRepository.findById(dto.getGenre().getId()).orElseThrow(EntityNotFoundException::new);
-        var author = authorRepository.findById(dto.getAuthor().getId()).orElseThrow(EntityNotFoundException::new);
+    public BookDto create(BookCreateDto dto) {
+        var genre = genreRepository.findById(dto.getGenreId()).orElseThrow(NotFoundException::new);
+        var author = authorRepository.findById(dto.getAuthorId()).orElseThrow(NotFoundException::new);
         var book = Book.builder()
                 .title(dto.getTitle())
                 .genre(genre)
@@ -59,11 +61,12 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto update(BookDto dto) {
-        var genre = genreRepository.findById(dto.getGenre().getId()).orElseThrow(EntityNotFoundException::new);
-        var author = authorRepository.findById(dto.getAuthor().getId()).orElseThrow(EntityNotFoundException::new);
+    public BookDto update(BookUpdateDto dto) {
+        var oldBook = bookRepository.findById(dto.getId()).orElseThrow(NotFoundException::new);
+        var genre = genreRepository.findById(dto.getGenreId()).orElseThrow(NotFoundException::new);
+        var author = authorRepository.findById(dto.getAuthorId()).orElseThrow(NotFoundException::new);
         var book = Book.builder()
-                .id(dto.getId())
+                .id(oldBook.getId())
                 .title(dto.getTitle())
                 .genre(genre)
                 .author(author)

@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.dto.AuthorDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.mapper.AuthorMapper;
 import ru.skilanov.spring.models.Author;
 import ru.skilanov.spring.repositories.AuthorRepository;
 import ru.skilanov.spring.service.api.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,9 +21,10 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<AuthorDto> findById(long id) {
+    public AuthorDto findById(long id) {
         return authorRepository.findById(id)
-                .map(mapper::toDto);
+                .map(mapper::toDto)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)

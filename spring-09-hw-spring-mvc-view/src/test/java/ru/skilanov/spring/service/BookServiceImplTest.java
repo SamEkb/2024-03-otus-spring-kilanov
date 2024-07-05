@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.dto.AuthorDto;
 import ru.skilanov.spring.dto.BookDto;
 import ru.skilanov.spring.dto.GenreDto;
-import ru.skilanov.spring.exception.EntityNotFoundException;
+import ru.skilanov.spring.dto.request.BookCreateDto;
+import ru.skilanov.spring.dto.request.BookUpdateDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.mapper.AuthorMapperImpl;
 import ru.skilanov.spring.mapper.BookMapperImpl;
 import ru.skilanov.spring.mapper.CommentMapperImpl;
@@ -85,10 +87,10 @@ public class BookServiceImplTest {
 
     @Test
     public void whenInsertBookThenItInserted() {
-        var book = BookDto.builder()
+        var book = BookCreateDto.builder()
                 .title("Book_1")
-                .genre(new GenreDto(ID, "Genre_1"))
-                .author(new AuthorDto(ID, "Author_1"))
+                .genreId(ID)
+                .authorId(ID)
                 .build();
 
         var resultBook = bookService.create(book);
@@ -98,18 +100,25 @@ public class BookServiceImplTest {
 
     @Test
     public void whenUpdateBookThenItUpdated() {
-        var updatedBook = new BookDto(ID, "Book_" + 2L, author, genre);
+        var updatedBook = new BookUpdateDto(ID, "Book_" + 2L, ID, ID);
 
         var resultBook = bookService.update(updatedBook);
 
-        assertThat(resultBook).isEqualTo(updatedBook);
+        var dto = new BookUpdateDto(
+                resultBook.getId(),
+                resultBook.getTitle(),
+                resultBook.getAuthor().getId(),
+                resultBook.getGenre().getId()
+        );
+
+        assertThat(dto).isEqualTo(updatedBook);
     }
 
     @Test
     public void whenDeleteBookThenItDeleted() {
         assertThat(bookService.findById(ID)).isNotNull();
         bookService.deleteById(ID);
-        assertThrows(EntityNotFoundException.class, () -> bookService.findById(ID));
+        assertThrows(NotFoundException.class, () -> bookService.findById(ID));
         assertThat(commentService.findAllByBookId(ID)).isEmpty();
     }
 

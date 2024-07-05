@@ -40,7 +40,7 @@ public class Book {
     @Column(name = "id")
     @EqualsAndHashCode.Include
     @ToString.Include
-    private long id;
+    private Long id;
 
     @Column(name = "title", nullable = false)
     @EqualsAndHashCode.Include

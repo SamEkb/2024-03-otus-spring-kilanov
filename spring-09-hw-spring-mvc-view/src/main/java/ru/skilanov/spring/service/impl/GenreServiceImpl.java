@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skilanov.spring.dto.GenreDto;
+import ru.skilanov.spring.exception.NotFoundException;
 import ru.skilanov.spring.mapper.GenreMapper;
 import ru.skilanov.spring.models.Genre;
 import ru.skilanov.spring.repositories.GenreRepository;
 import ru.skilanov.spring.service.api.GenreService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,8 +21,10 @@ public class GenreServiceImpl implements GenreService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<GenreDto> findById(long id) {
-        return genreRepository.findById(id).map(mapper::toDto);
+    public GenreDto findById(long id) {
+        return genreRepository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
