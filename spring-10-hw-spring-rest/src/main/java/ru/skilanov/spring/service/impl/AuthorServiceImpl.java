@@ -48,11 +48,9 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional
     @Override
     public AuthorDto update(long id, String fullName) {
-        var author = Author.builder()
-                .id(id)
-                .fullName(fullName)
-                .build();
-        var updatedAuthor = authorRepository.save(author);
+        var foundAuthor = authorRepository.findById(id).orElseThrow(NotFoundException::new);
+        foundAuthor.setFullName(fullName);
+        var updatedAuthor = authorRepository.save(foundAuthor);
         return mapper.toDto(updatedAuthor);
     }
 

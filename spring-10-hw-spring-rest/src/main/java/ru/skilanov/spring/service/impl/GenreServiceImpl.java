@@ -38,13 +38,22 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     @Override
     public GenreDto create(String name) {
-        return save(0, name);
+        var genre = Genre.builder()
+                .name(name)
+                .build();
+        var savedGenre = genreRepository.save(genre);
+
+        return mapper.toDto(savedGenre);
     }
 
     @Transactional
     @Override
     public GenreDto update(long id, String name) {
-        return save(id, name);
+        var genre = genreRepository.findById(id).orElseThrow(NotFoundException::new);
+        genre.setName(name);
+        var updatedGenre = genreRepository.save(genre);
+
+        return mapper.toDto(updatedGenre);
     }
 
     @Transactional
@@ -53,13 +62,4 @@ public class GenreServiceImpl implements GenreService {
         genreRepository.deleteById(id);
     }
 
-    private GenreDto save(long id, String name) {
-        var genre = Genre.builder()
-                .id(id)
-                .name(name)
-                .build();
-        var savedGenre = genreRepository.save(genre);
-
-        return mapper.toDto(savedGenre);
-    }
 }
