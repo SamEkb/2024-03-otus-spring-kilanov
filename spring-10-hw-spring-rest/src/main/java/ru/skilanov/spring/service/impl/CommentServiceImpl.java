@@ -56,13 +56,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto update(long id, String description) {
         var oldComment = repository.findById(id).orElseThrow(NotFoundException::new);
-        var updatedComment = Comment.builder()
-                .id(oldComment.getId())
-                .description(description)
-                .book(oldComment.getBook())
-                .build();
+        oldComment.setDescription(description);
 
-        var savedComment = repository.save(updatedComment);
+        var savedComment = repository.save(oldComment);
         return mapper.toDto(savedComment);
     }
 
