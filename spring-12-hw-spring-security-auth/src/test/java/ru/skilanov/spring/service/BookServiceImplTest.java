@@ -27,7 +27,7 @@ import ru.skilanov.spring.service.impl.CommentServiceImpl;
 import ru.skilanov.spring.service.impl.GenreServiceImpl;
 
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -123,24 +123,24 @@ public class BookServiceImplTest {
     }
 
     private static List<AuthorDto> getDbAuthors() {
-        return IntStream.range(1, 4).boxed()
+        return LongStream.range(1, 4).boxed()
                 .map(id -> new AuthorDto(id, "Author_" + id))
                 .toList();
     }
 
     private static List<GenreDto> getDbGenres() {
-        return IntStream.range(1, 4).boxed()
+        return LongStream.range(1, 4).boxed()
                 .map(id -> new GenreDto(id, "Genre_" + id))
                 .toList();
     }
 
     private static List<BookDto> getDbBooks(List<AuthorDto> dbAuthors, List<GenreDto> dbGenres) {
-        return IntStream.range(1, 4).boxed()
+        return LongStream.range(1, 4).boxed()
                 .map(id -> BookDto.builder()
                         .id(id)
                         .title("Book_" + id)
-                        .author(dbAuthors.get(id - 1))
-                        .genre(dbGenres.get(id - 1))
+                        .author(dbAuthors.get((int) (id - 1)))
+                        .genre(dbGenres.get((int) (id - 1)))
                         .build()
                 )
                 .toList();
