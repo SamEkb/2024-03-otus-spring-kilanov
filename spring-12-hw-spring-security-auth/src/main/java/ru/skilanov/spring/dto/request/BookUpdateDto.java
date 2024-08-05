@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BookUpdateDto {
 
-    private long id;
+    private Long id;
 
     private String title;
 
-    private long authorId;
+    private Long authorId;
 
     private long genreId;
 }

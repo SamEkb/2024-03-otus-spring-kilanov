@@ -62,15 +62,13 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto update(BookUpdateDto dto) {
-        var oldBook = bookRepository.findById(dto.getId()).orElseThrow(NotFoundException::new);
+        var book = bookRepository.findById(dto.getId()).orElseThrow(NotFoundException::new);
         var genre = genreRepository.findById(dto.getGenreId()).orElseThrow(NotFoundException::new);
         var author = authorRepository.findById(dto.getAuthorId()).orElseThrow(NotFoundException::new);
-        var book = Book.builder()
-                .id(oldBook.getId())
-                .title(dto.getTitle())
-                .genre(genre)
-                .author(author)
-                .build();
+
+        book.setGenre(genre);
+        book.setTitle(dto.getTitle());
+        book.setAuthor(author);
 
         var savedBook = bookRepository.save(book);
         return bookMapper.toDto(savedBook);
