@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function fetchAuthors() {
+            fetch("/api/authors")
+                .then(response => response.json())
+                .then(authors => {
+                    const authorSelect = document.getElementById("author-select");
+                    authors.forEach(author => {
+                        const option = document.createElement("option");
+                        option.value = author.id;
+                        option.textContent = author.fullName;
+                        authorSelect.appendChild(option);
+                    });
+                });
+        }
+
+        function fetchGenres() {
+            fetch("/api/genres")
+                .then(response => response.json())
+                .then(genres => {
+                    const genreSelect = document.getElementById("genre-select");
+                    genres.forEach(genre => {
+                        const option = document.createElement("option");
+                        option.value = genre.id;
+                        option.textContent = genre.title;
+                        genreSelect.appendChild(option);
+                    });
+                });
+        }
+
+        function saveBook() {
+            const savedBookContainer = document.getElementById("saved-book");
+            const nameInput = document.getElementById("book-name-input");
+            const authorSelect = document.getElementById("author-select");
+            const genreSelect = document.getElementById("genre-select");
+
+            const book = {
+                title: nameInput.value,
+                authorId: authorSelect.value,
+                genreId: genreSelect.value
+            };
+
+            fetch("/api/books", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            })
+                .then(rawResponse => rawResponse.json())
+                .then(json => savedBookContainer.innerHTML = JSON.stringify(json, null, 4));
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchAuthors);
+        document.addEventListener("DOMContentLoaded", fetchGenres);
+    </script>
+</head>
+<body>
+
+<h3>Form for new book creation:</h3>
+<form id="edit-form" action="add.html" th:method="post">
+    <div class="row">
+        <label for="book-name-input">Name:</label>
+        <input id="book-name-input" name="name" type="text" value="John Doe"/>
+    </div>
+    <div class="row">
+        <label for="author-select">Author:</label>
+        <select id="author-select" name="author">
+            <option value="">Select an author</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="genre-select">Genre:</label>
+        <select id="genre-select" name="genre">
+            <option value="">Select a genre</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="saveBook()">Save</button>
+        <a href="list.html" th:href="@{/}"><button type="button">Go Back</button></a>
+    </div>
+</form>
+
+<h3>Saved book:</h3>
+<pre id="saved-book"></pre>
+
+</body>
+</html>
