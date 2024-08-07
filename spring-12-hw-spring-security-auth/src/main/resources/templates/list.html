@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .persons td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<h3>Books:</h3>
+<a href="create.html" th:href="@{/create}" class="btn btn-success">Create</a>
+<table class="books" th:hidden="${books.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="b : ${books}">
+        <td th:text="${b.id}">1</td>
+        <td th:text="${b.title}">Title</td>
+        <td th:text="${b.author.getFullName()}">Author</td>
+        <td th:text="${b.genre.getName()}">Genre</td>
+        <td>
+            <a href="edit.html" th:href="@{/edit(id=${b.id})}" class="btn btn-success">
+                &nbsp;Edit</a>
+            <form th:action="@{/delete(id=${b.id})}" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+    </tbody>
+</table>
+</body>
+</html>
