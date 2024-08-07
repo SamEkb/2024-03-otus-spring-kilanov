@@ -16,18 +16,16 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByUserName(username);
+        var optionalUser = userRepository.findByUserName(username);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        return User
-                .withUsername(user.getUserName())
-                .password(user.getPassword())
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .build();
+        return optionalUser
+                .map(user -> User
+                        .withUsername(user.getUserName())
+                        .password(user.getPassword())
+                        .accountExpired(false)
+                        .accountLocked(false)
+                        .credentialsExpired(false)
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

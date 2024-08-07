@@ -6,18 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import ru.skilanov.spring.config.SecurityConfig;
 import ru.skilanov.spring.dto.AuthorDto;
 import ru.skilanov.spring.dto.BookDto;
 import ru.skilanov.spring.dto.GenreDto;
 import ru.skilanov.spring.dto.request.BookCreateDto;
 import ru.skilanov.spring.dto.request.BookUpdateDto;
 import ru.skilanov.spring.exception.NotFoundException;
+import ru.skilanov.spring.repositories.UserRepository;
 import ru.skilanov.spring.service.api.AuthorService;
 import ru.skilanov.spring.service.api.BookService;
 import ru.skilanov.spring.service.api.GenreService;
@@ -30,9 +33,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 
 @DisplayName("Books controller test")
 @WebMvcTest(BookController.class)
+@Import(SecurityConfig.class)
 public class BookControllerTest {
 
     public static final String BOOK_TITLE_KARENINA = "Anna Karenina";
@@ -50,6 +55,9 @@ public class BookControllerTest {
 
     @MockBean
     private GenreService genreService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -189,4 +197,37 @@ public class BookControllerTest {
                 .perform(get("/book/" + ONE))
                 .andExpect(status().isInternalServerError());
     }
+
+    @Test
+    void whenGetAllBooksWithoutAuthThenRedirectToLogin() throws Exception {
+        this.mvc
+                .perform(get("/"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void whenAddBookWithoutAuthThenRedirectToLogin() throws Exception {
+        this.mvc
+                .perform(get("/create"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void whenEditBookWithoutAuthThenRedirectToLogin() throws Exception {
+        this.mvc
+                .perform(get("/edit").param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void whenDeleteBookWithoutAuthThenRedirectToLogin() throws Exception {
+        this.mvc
+                .perform(post("/delete").param("id", "1").with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
 }
