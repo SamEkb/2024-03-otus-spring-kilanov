@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2024-08-05--001-users-test-data
+      author: kilanov
+      context: test
+      runOnChange: true
+      loadData:
+        file: data/2024-08-05--001-users.csv
+        relativeToChangelogFile: true
+        separator: ;
+        quotChar: '"'
+        encoding: UTF-8
+        tableName: users
